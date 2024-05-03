@@ -61,7 +61,9 @@ services:
     ports:
       - "9999:9999"
     environment:
-      - POSTGRES_PASSWORD= bdaPrimOrd
+      - POSTGRES_PASSWORD=bdaPrimOrd
+      - POSTGRES_USER=primOrd
+      - POSTGRES_DB=PrimOrd
     volumes:
       - "postgres:/var/lib/postgresql/data"
 
@@ -118,8 +120,6 @@ services:
       - 7687:7687
     volumes:
       - neo4jVolume:/data/
-    env_file:
-      - .env.neo4j
 
 volumes:
   localstackVolume:
