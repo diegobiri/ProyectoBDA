@@ -99,7 +99,30 @@ services:
     volumes:
       - "localstackVolume:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+  
+  mongo:
+    image: mongo
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=bda
+      - MONGODB_INITDB_ROOT_PASSWORD=bdaPass
+    ports:
+      - 27017:27017
+    volumes:
+      - mongoVolume:/data/db
+
+  
+  neo4j:
+    image: neo4j:latest
+    ports: 
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - neo4jVolume:/data/
+    env_file:
+      - .env.neo4j
 
 volumes:
   localstackVolume:
   postgres:
+  mongoVolume:
+  neo4jVolume:
