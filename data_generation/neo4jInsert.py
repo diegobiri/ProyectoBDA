@@ -45,18 +45,7 @@ class Neo4jCRUD:
         )
         result = tx.run(query, props=properties)
         
-
-    def atracciones_visitante(self, nombre):
-        with self._driver.session() as session:
-            return session.read_transaction(self._atracciones_visitante, nombre)
-          
     @staticmethod
-    def _atracciones_visitante(tx, nombre):
-        query = (
-            f"MATCH (n:Visitantes)-[]-(v:Atracciones) where n.visitor_name='{nombre}' RETURN v.attraction_name"
-        )
-        return tx.run(query)
-    
     def create_relationship(self,labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName,fecha):
          with self._driver.session() as session:
             result = session.write_transaction(self._create_relationship, labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName,fecha)
@@ -78,27 +67,27 @@ password = "password"
 
 neo4j_crud = Neo4jCRUD(uri, user, password)
 
-readerAtracciones= read_csv_file("Neo4j/Atracciones.csv")
-readerInteracciones=read_csv_file("Neo4j/Interacciones.csv")
-readerVisitantes=read_csv_file("Neo4j/Visitantes.csv")
+readerMenus= read_csv_file("ProyectoBDA/data_Prim_ord/csv/menu.csv")
+readerRelaciones=read_json_file("ProyectoBDA/data_Prim_ord/json/relaciones.json")
+readerPlatos=read_csv_file("ProyectoBDA/data_Prim_ord/csv/platos.csv")
 
-for element in readerAtracciones[1:]:
+for element in readerMenus[1:]:
     node_properties = {
         "id": element[0], 
-        "attraction_name": element[1],
-        "category":element[2],
-        "location":element[3]
+        "precio": element[1],
+        "disponibilidad":element[2],
+        "id_restaurante":element[3]
         }
-    neo4j_crud.create_node("Atracciones", node_properties)
+    neo4j_crud.create_node("Menus", node_properties)
 
-for element in readerVisitantes[1:]:
+for element in readerPlatos[1:]:
     node_properties = {
         "id": element[0], 
-        "visitor_name": element[1],
-        "age":element[2],
-        "gender":element[3]
+        "nombre": element[1],
+        "ingredientes":element[2],
+        "alergenos":element[3]
         }
-    neo4j_crud.create_node("Visitantes", node_properties)
+    neo4j_crud.create_node("Platos", node_properties)
 
-for element in readerInteracciones[1:]:
-    neo4j_crud.create_relationship("Visitantes",element[0], "Atracciones",element[1],"VISITA", element[2] + element[3])
+for element in readerRelaciones:
+    neo4j_crud.create_relationship("Id menu",element[0], "Id restaurante",element[1])
