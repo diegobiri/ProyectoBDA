@@ -46,17 +46,16 @@ class Neo4jCRUD:
         result = tx.run(query, props=properties)
         
     @staticmethod
-    def create_relationship(self,labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName,fecha):
+    def create_relationship(self,labelOrigin,labelEnd):
          with self._driver.session() as session:
-            result = session.write_transaction(self._create_relationship, labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName,fecha)
+            result = session.write_transaction(self._create_relationship, labelOrigin,labelEnd)
             return result
         
     @staticmethod
-    def _create_relationship(tx, labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName,fecha):
+    def _create_relationship(tx, labelOrigin,labelEnd):
         query = (
             f"MATCH (n:{labelOrigin}),(c:{labelEnd}) "
-            f"WHERE n.id='{propertyOrigin}' and c.id='{propertyEnd}' " 
-            f"CREATE (n)-[:{relationshipName} {{fecha:'{fecha}'}} ]->(c)"
+            f"WHERE n.id='{labelOrigin}' and c.id='{labelEnd}' " 
         )
         result = tx.run(query)
         return result
@@ -73,7 +72,7 @@ readerPlatos=read_csv_file("ProyectoBDA/data_Prim_ord/csv/platos.csv")
 
 for element in readerMenus[1:]:
     node_properties = {
-        "id": element[0], 
+        "id_menu": element[0], 
         "precio": element[1],
         "disponibilidad":element[2],
         "id_restaurante":element[3]
@@ -82,7 +81,7 @@ for element in readerMenus[1:]:
 
 for element in readerPlatos[1:]:
     node_properties = {
-        "id": element[0], 
+        "platoID": element[0], 
         "nombre": element[1],
         "ingredientes":element[2],
         "alergenos":element[3]
@@ -90,4 +89,4 @@ for element in readerPlatos[1:]:
     neo4j_crud.create_node("Platos", node_properties)
 
 for element in readerRelaciones:
-    neo4j_crud.create_relationship("Id menu",element[0], "Id restaurante",element[1])
+    neo4j_crud.create_relationship("id_menu",element[0], "id_plato",element[1])

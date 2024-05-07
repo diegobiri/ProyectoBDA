@@ -10,11 +10,8 @@ def read_json_file(filename):
         return None
     
 class MongoDBOperations:
-    def __init__(self, database_name, port,username, password):
-        if username and password:
-            self.client = MongoClient(f'mongodb://{username}:{password}@localhost:{{port}}/')
-        else:
-            self.client = MongoClient(f'mongodb://localhost:{port}/')
+    def __init__(self, database_name,port):
+        self.client = MongoClient(f'mongodb://localhost:{port}/')
         self.db = self.client[database_name]
         
     def create_clientes(self, collection_name,data):
@@ -25,7 +22,7 @@ class MongoDBOperations:
 clientes=read_json_file("ProyectoBDA/data_Prim_ord/json/clientes.json")
 
 
-mongo_operations = MongoDBOperations('Clientes','27017','bda','bdaPass')
+mongo_operations = MongoDBOperations('Clientes',27017)
 
 for data in clientes:
     mongo_operations.create_clientes("clientes",data)
