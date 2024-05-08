@@ -39,22 +39,24 @@ def read_csv_file(filename):
     return data
 
 class Database:
-    def __init__(self, host, database, user, password,port):
-        self.conexion = psycopg2.connect(
+    def __init__(self, host, database, user, password, port):
+        self.connection = psycopg2.connect(
             host=host,
             database=database,
             user=user,
-            password=password
+            password=password,
+            port=port
         )
         self.cursor = self.connection.cursor()
 
-    def create_table(self,stringCreate):
+    def create_table(self, stringCreate):
         self.cursor.execute(stringCreate)
         self.connection.commit()
 
-    def insert_data(self, query,params):
+    def insert_data(self, query, params):
         self.cursor.execute(query, params)
         self.connection.commit()
+
         
 readerEmpleados= read_csv_file("ProyectoBDA/data_Prim_ord/csv/empleados.csv")
 readerHoteles=read_csv_file("ProyectoBDA/data_Prim_ord/csv/hoteles.csv")
@@ -63,9 +65,9 @@ DB_HOST = "localhost"
 DB_DATABASE = "PrimOrd"
 DB_USER = "primOrd"
 DB_PASSWORD = "bdaPrimOrd"
-DB_PORT = "5432"
+DB_PORT = "9999"
 
-db = Database(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT)
+db = Database(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD,DB_PORT)
 db.create_table(create_table_empleados)
 db.create_table(create_table_hoteles)
 
@@ -76,8 +78,8 @@ for element in readerEmpleados[1:]:
     db.insert_data(insert_query,data)
     
 for element in readerHoteles[1:]:
-    insert_query = "INSERT INTO Hoteles (id_hotel,nombre_hotel,direccion_hotel) VALUES (%s, %s, %s, %s)"
-    data= (element[0],element[1],element[2],element[3])
+    insert_query = "INSERT INTO Hoteles (id_hotel,nombre_hotel,direccion_hotel) VALUES (%s, %s, %s)"
+    data= (element[0],element[1],element[2])
     db.insert_data(insert_query,data)
 
 # Confirmar los cambios
