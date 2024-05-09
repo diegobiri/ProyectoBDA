@@ -41,25 +41,31 @@ class Neo4jCRUD:
 
     @staticmethod
     def _create_node(tx, label, properties):
-        query = f"CREATE (n:{label} $properties) RETURN n"
-        result = tx.run(query, properties=properties)
-        return result
-    
-    def create_relationship(self, labelOrigin, idOrigin, labelEnd, idEnd, relationshipName):
-        with self._driver.session() as session:
-            result = session.write_transaction(self._create_relationship, labelOrigin, idOrigin, labelEnd, idEnd, relationshipName)
-            return result
-
-    @staticmethod
-    def _create_relationship(tx, labelOrigin, idOrigin, labelEnd, idEnd, relationshipName):
         query = (
-            f"MATCH (a:{labelOrigin} {{id: $idOrigin}}), (b:{labelEnd} {{id: $idEnd}}) "
-            f"CREATE (a)-[r:{relationshipName}]->(b) "
-            f"RETURN a, b, r"
+            f"CREATE (n:{label} $props) "
+            "RETURN n"
         )
-        parameters = {'idOrigin': idOrigin, 'idEnd': idEnd}
-        result = tx.run(query, parameters)
+        result = tx.run(query, props=properties)
+    
+    @staticmethod
+    def _create_relationship(tx, labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName):
+        query = (
+            f"MATCH (n:{labelOrigin}),(c:{labelEnd}) "
+            f"WHERE n.id_menu='{propertyOrigin}' and c.platoId='{propertyEnd}' " 
+            f"CREATE (n)-[:{relationshipName}]->(c)"
+        )
+        result = tx.run(query)
         return result
+
+
+    def create_relationship(self,labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName):
+         with self._driver.session() as session:
+            result = session.write_transaction(self._create_relationship, labelOrigin,propertyOrigin,labelEnd,propertyEnd,relationshipName)
+            return result
+    
+    
+
+    
     
 
 
@@ -73,11 +79,23 @@ readerMenus = read_csv_file("ProyectoBDA/data_Prim_ord/csv/menu.csv")
 readerPlatos = read_csv_file("ProyectoBDA/data_Prim_ord/csv/platos.csv")
 readerRelaciones = read_json_file("ProyectoBDA/data_Prim_ord/json/relaciones.json")
 
-for element in readerMenus:
-    neo4j_crud.create_node("Menus", {"id_menu": element[0], "precio": element[1], "disponibilidad": element[2], "id_restaurante": element[3]})
+for element in readerMenus[1:]:
+    node_properties = {
+        "id_menu": element[0], 
+        "precio": element[1],
+        "disponibilidad":element[2],
+        "id_restaurante":element[3]
+    }
+    neo4j_crud.create_node("Menus", node_properties)
 
-for element in readerPlatos:
-    neo4j_crud.create_node("Platos", {"platoId": element[0], "nombre": element[1], "ingredientes": element[2], "alergenos": element[3]})
+for element in readerPlatos[1:]:
+    node_properties = {
+        "platoId": element[0], 
+        "nombre": element[1],
+        "ingredientes":element[2],
+        "alergenos":element[3]
+    }
+    neo4j_crud.create_node("Platos", node_properties)
 
 for element in readerRelaciones:
     neo4j_crud.create_relationship("Menus", element['id_menu'], "Platos", element['id_plato'], "ESTA")
