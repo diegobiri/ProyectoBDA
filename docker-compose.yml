@@ -68,7 +68,7 @@ services:
       - "postgres:/var/lib/postgresql/data"
 
   kafka:
-    image: wurstmeister/kafka:latest
+    image: confluentinc/cp-kafka:6.2.0
     hostname: kafka
     container_name: kafka
     ports:
@@ -79,14 +79,14 @@ services:
       KAFKA_LISTENERS: INSIDE://kafka:9093,OUTSIDE://0.0.0.0:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_CREATE_TOPICS: "sales_stream:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - zookeeper
 
   zookeeper:
-    image: wurstmeister/zookeeper:latest
+    image: zookeeper:3.6
     container_name: zookeeper
     ports:
       - "2181:2181"
