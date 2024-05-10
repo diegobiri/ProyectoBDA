@@ -10,7 +10,7 @@ services:
     volumes:
       - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
       - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_bda:/opt/spark-generation
+      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
     environment:
       - SPARK_LOCAL_IP=spark-master
       - SPARK_WORKLOAD=master
@@ -35,7 +35,7 @@ services:
     volumes:
       - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
       - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_bda:/opt/spark-generation
+      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
 
   spark-worker-b:
     build:
@@ -57,7 +57,7 @@ services:
     volumes:
       - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
       - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_bda:/opt/spark-generation
+      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
 
   database:
     image: postgres:16.2-alpine
