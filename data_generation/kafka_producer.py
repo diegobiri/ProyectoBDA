@@ -7,7 +7,7 @@ def read_text_file(filename):
     try:
         with open(filename, 'r') as file:
             for line in file:
-                line = line.strip()
+                print(line)
             return line
     except FileNotFoundError:
         print(f"File '{filename}' not found.")

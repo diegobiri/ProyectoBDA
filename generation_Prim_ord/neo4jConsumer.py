@@ -37,8 +37,6 @@ schema = StructType() \
     .add("id_restaurante", IntegerType()) \
     .add("id_plato", IntegerType()) \
     .add("nombre", StringType()) \
-    .add("ingredientes", StringType()) \
-    .add("alergenos", StringType()) \
 
 # Convert value column to JSON and apply schema
 df = df.selectExpr("CAST(value AS STRING)") \
@@ -59,7 +57,7 @@ query = df \
     .writeStream \
     .outputMode("append") \
     .format("csv") \
-    .option("path", "s3a://new-sample-bucket/menus_platos") \
+    .option("path", "s3a://new-sample-bucket/clientes") \
     .option("checkpointLocation", "s3a://new-sample-bucket/checkopoint")\
     .option("header", "true")\
     .start()

@@ -107,9 +107,11 @@ services:
   
   mongo:
     image: mongo
+    hostname: mongodb
     environment:
       - MONGODB_INITDB_ROOT_USERNAME=bda
       - MONGODB_INITDB_ROOT_PASSWORD=bdaPass
+      - MONGODB_INITDB_DATABASE=clientes
     ports:
       - 27017:27017
     volumes:

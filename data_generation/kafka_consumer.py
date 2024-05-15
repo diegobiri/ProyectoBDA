@@ -26,16 +26,18 @@ df =spark  \
   .readStream \
   .format("kafka") \
   .option("kafka.bootstrap.servers", "kafka:9093") \
-  .option("subscribe", "sales_stream") \
+  .option("subscribe", "reservas_stream") \
   .load()
   
 
 schema = StructType() \
-    .add("timestamp", IntegerType()) \
-    .add("store_id", IntegerType()) \
-    .add("product_id", StringType()) \
-    .add("quantity_sold", IntegerType()) \
-    .add("revenue", DoubleType())
+    .add("id_cliente", IntegerType()) \
+    .add("fecha_llegada", StringType()) \
+    .add("fecha_salida", StringType()) \
+    .add("tipo_habitacion", StringType()) \
+    .add("preferencias_comida", StringType()) \
+    .add("id_habitacion", IntegerType()) \
+    .add("id_restaurante", IntegerType()) \
 
 # Convert value column to JSON and apply schema
 df = df.selectExpr("CAST(value AS STRING)") \
@@ -56,7 +58,7 @@ query = df \
     .writeStream \
     .outputMode("append") \
     .format("csv") \
-    .option("path", "s3a://new-sample-bucket/sales") \
+    .option("path", "s3a://new-sample-bucket/reservas") \
     .option("checkpointLocation", "s3a://new-sample-bucket/checkopoint")\
     .option("header", "true")\
     .start()

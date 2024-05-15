@@ -46,7 +46,7 @@ with open('ProyectoBDA/data_Prim_ord/json/combined_data.json', 'w', encoding='ut
     json.dump(combined_data, file, ensure_ascii=False, indent=4)
 
 
-combine = read_json_file('conbined_data.json')
+combine = read_json_file('ProyectoBDA/data_Prim_ord/json/combined_data.json')
 
 producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
                          value_serializer=lambda x: dumps(x).encode('utf-8'))

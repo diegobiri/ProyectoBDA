@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json
-from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType , BooleanType
+from pyspark.sql.types import StructType, StringType, IntegerType, DoubleType
 
 aws_access_key_id='test'
 aws_secret_access_key='test'
@@ -26,19 +26,15 @@ df =spark  \
   .readStream \
   .format("kafka") \
   .option("kafka.bootstrap.servers", "kafka:9093") \
-  .option("subscribe", "menus_stream") \
+  .option("subscribe", "clientes_stream") \
   .load()
   
 
 schema = StructType() \
-    .add("id_menu", IntegerType()) \
-    .add("precio", DoubleType()) \
-    .add("disponibilidad", BooleanType()) \
-    .add("id_restaurante", IntegerType()) \
-    .add("id_plato", IntegerType()) \
+    .add("id_cliente", IntegerType()) \
     .add("nombre", StringType()) \
-    .add("ingredientes", StringType()) \
-    .add("alergenos", StringType()) \
+    .add("direccion", StringType()) \
+    .add("preferencias_alimenticias", StringType())
 
 # Convert value column to JSON and apply schema
 df = df.selectExpr("CAST(value AS STRING)") \
@@ -59,7 +55,7 @@ query = df \
     .writeStream \
     .outputMode("append") \
     .format("csv") \
-    .option("path", "s3a://new-sample-bucket/menus_platos") \
+    .option("path", "s3a://new-sample-bucket/clientes") \
     .option("checkpointLocation", "s3a://new-sample-bucket/checkopoint")\
     .option("header", "true")\
     .start()
