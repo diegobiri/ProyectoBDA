@@ -15,18 +15,17 @@ spark = SparkSession.builder \
     .config("spark.jars.packages","org.apache.spark:spark-hadoop-cloud_2.13:3.5.1,software.amazon.awssdk:s3:2.25.11,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1") \
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
     .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
-    .config("spark.driver.extraClassPath", "/opt/spark/jars/s3-2.25.11.jar") \
-    .config("spark.executor.extraClassPath", "/opt/spark/jars/s3-2.25.11.jar") \
+    .config("spark.driver.extraClassPath", "/opt/spark/jars/hadoop-aws-3.3.1.jar") \
+    .config("spark.executor.extraClassPath", "/opt/spark/jars/hadoop-aws-3.3.1.jar") \
     .master("spark://spark-master:7077") \
     .getOrCreate()
     
-    
-       
 df =spark  \
   .readStream \
   .format("kafka") \
   .option("kafka.bootstrap.servers", "kafka:9093") \
   .option("subscribe", "clientes_stream") \
+  .option("failOnDataLoss", "false") \
   .load()
   
 
@@ -48,17 +47,13 @@ df.printSchema()
 query = df \
     .writeStream \
     .outputMode("append") \
-    .format("console") \
+    .format("json") \
+    .option("path","s3://new-sample-bucket/clientes_json") \
+    .option("checkpointLocation","s3://new-sample-bucket/clientes") \
+    .option("multiline","true")\
     .start()
 
-query = df \
-    .writeStream \
-    .outputMode("append") \
-    .format("csv") \
-    .option("path", "s3a://new-sample-bucket/clientes") \
-    .option("checkpointLocation", "s3a://new-sample-bucket/checkopoint")\
-    .option("header", "true")\
-    .start()
+
 
 # Wait for the termination of the query
 query.awaitTermination()
