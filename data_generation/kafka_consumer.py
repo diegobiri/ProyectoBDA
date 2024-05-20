@@ -32,6 +32,7 @@ df =spark  \
   
 
 schema = StructType() \
+    .add("id_reserva", IntegerType()) \
     .add("id_cliente", IntegerType()) \
     .add("fecha_llegada", StringType()) \
     .add("fecha_salida", StringType()) \
