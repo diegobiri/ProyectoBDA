@@ -3,6 +3,7 @@ import pandas as pd
 from io import StringIO
 import boto3
 
+#Descarga un archivo desde un bucket de S3 y lo retorna como un objeto StringIO.
 def download_from_s3(bucket, key, access_key, secret_access_key):
     session = boto3.Session(
         aws_access_key_id=access_key,
@@ -12,6 +13,8 @@ def download_from_s3(bucket, key, access_key, secret_access_key):
     response = s3.get_object(Bucket=bucket, Key=key)
     return StringIO(response['Body'].read().decode('utf-8'))
 
+
+#Crea tablas en la base de datos PostgreSQL y carga datos en ellas desde archivos almacenados en S3.
 def create_and_load_tables(connection):
     cursor_clientes = connection.cursor()
     cursor_platos = connection.cursor()

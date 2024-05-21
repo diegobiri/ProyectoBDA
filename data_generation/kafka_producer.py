@@ -10,7 +10,7 @@ def read_json_file(filename):
     except FileNotFoundError:
         return None
 
-
+#Parsea un archivo de texto con información de reservas y retorna una lista de diccionarios con los datos.
 def parse_reservas(file_path):
     try:
         with open(file_path, 'r') as file:
