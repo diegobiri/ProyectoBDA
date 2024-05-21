@@ -11,25 +11,15 @@ def perform_data_analysis():
     url = "jdbc:postgresql://localhost:9999/PrimOrd"
 
     # Cargar tablas desde PostgreSQL
-    empleados_df = spark.read.jdbc(url=url, table="empleados", properties=properties)
-    hoteles_df = spark.read.jdbc(url=url, table="hoteles", properties=properties)
-    habitaciones_df = spark.read.jdbc(url=url, table="habitaciones", properties=properties)
     menus_df = spark.read.jdbc(url=url, table="menus", properties=properties)
     clientes_df = spark.read.jdbc(url=url, table="clientes", properties=properties)
     platos_df = spark.read.jdbc(url=url, table="platos", properties=properties)
-    relaciones_df = spark.read.jdbc(url=url, table="relaciones", properties=properties)
-    restaurantes_df = spark.read.jdbc(url=url, table="restaurantes", properties=properties)
     reservas_df = spark.read.jdbc(url=url, table="reservas", properties=properties)
 
     # Registrar DataFrames como tablas SQL temporales
-    empleados_df.createOrReplaceTempView("empleados")
-    hoteles_df.createOrReplaceTempView("hoteles")
-    habitaciones_df.createOrReplaceTempView("habitaciones")
     menus_df.createOrReplaceTempView("menus")
     clientes_df.createOrReplaceTempView("clientes")
     platos_df.createOrReplaceTempView("platos")
-    relaciones_df.createOrReplaceTempView("relaciones")
-    restaurantes_df.createOrReplaceTempView("restaurantes")
     reservas_df.createOrReplaceTempView("reservas")
 
     # Consultas especificadas
@@ -38,7 +28,7 @@ def perform_data_analysis():
     # ¿Cuáles son las preferencias alimenticias más comunes entre los clientes?
     preferencias_clientes_df = spark.sql("""
         SELECT preferencias_alimenticias, COUNT(*) AS count
-        FROM clientes
+        FROM reservas
         GROUP BY preferencias_alimenticias
         ORDER BY count DESC
     """)
@@ -49,8 +39,8 @@ def perform_data_analysis():
     precio_medio_menu_df = spark.sql("""
         SELECT r.nombre AS nombre_restaurante, AVG(m.precio) AS precio_medio
         FROM menus m
-        JOIN restaurantes r ON m.id_restaurante = r.id_restaurante
-        GROUP BY r.nombre
+        JOIN reservas r ON m.id_restaurante = r.id_restaurante
+        GROUP BY r.id_restaurante
         ORDER BY precio_medio DESC
         LIMIT 1
     """)
