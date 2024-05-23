@@ -7,8 +7,8 @@ def perform_data_analysis():
         .getOrCreate()
 
     # Conexión con la base de datos PostgreSQL
-    properties = {"user": "primOrd", "password": "bdaPrimOrd"}
-    url = "jdbc:postgresql://localhost:9999/PrimOrd"
+    properties = {"user": "primOrd", "password": "bdaPrimOrd", "driver": "org.postgresql.Driver"}
+    url = "jdbc:postgresql://proyectobda-database-1:5432/primord"
 
     # Cargar tablas desde PostgreSQL
     menus_df = spark.read.jdbc(url=url, table="menus", properties=properties)
@@ -27,7 +27,7 @@ def perform_data_analysis():
     # 5.2.1 Análisis de las preferencias de los clientes
     # ¿Cuáles son las preferencias alimenticias más comunes entre los clientes?
     preferencias_clientes_df = spark.sql("""
-        SELECT preferencias_alimenticias, COUNT(*) AS count
+        SELECT DISTINCT preferencias_alimenticias, COUNT(*) AS count
         FROM reservas
         GROUP BY preferencias_alimenticias
         ORDER BY count DESC
