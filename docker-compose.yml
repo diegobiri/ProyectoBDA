@@ -8,9 +8,9 @@ services:
       - "9090:8080"
       - "7077:7077"
     volumes:
-      - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
-      - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
+      - ./apps_bda:/opt/spark-apps
+      - ./data_bda:/opt/spark-data
+      - ./generation_bda:/opt/spark-generation
     environment:
       - SPARK_LOCAL_IP=spark-master
       - SPARK_WORKLOAD=master
@@ -33,9 +33,9 @@ services:
       - SPARK_WORKLOAD=worker
       - SPARK_LOCAL_IP=spark-worker-a
     volumes:
-      - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
-      - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
+      - ./apps_bda:/opt/spark-apps
+      - ./data_bda:/opt/spark-data
+      - ./generation_bda:/opt/spark-generation
 
   spark-worker-b:
     build:
@@ -55,12 +55,13 @@ services:
       - SPARK_WORKLOAD=worker
       - SPARK_LOCAL_IP=spark-worker-b
     volumes:
-      - ./apps_Prim_ord:/opt/spark-apapps_Prim_ord
-      - ./data_Prim_ord:/opt/spark-data_Prim_ord
-      - ./generation_Prim_ord:/opt/spark-generation_Prim_ord
+      - ./apps_bda:/opt/spark-apps
+      - ./data_bda:/opt/spark-data
+      - ./generation_bda:/opt/spark-generation
 
   database:
-    image: postgres:16.2-alpine
+    hostname: my_postgres
+    image: postgres
     ports:
       - "9999:5432"
     environment:
@@ -119,7 +120,10 @@ services:
 
   
   neo4j:
-    image: neo4j:latest
+    image: neo4j:5.19
+    container_name: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/your_password
     ports: 
       - 7474:7474
       - 7687:7687
