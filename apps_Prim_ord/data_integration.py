@@ -4,6 +4,9 @@ from pyspark.sql import SparkSession
 aws_access_key_id = 'test'
 aws_secret_access_key = 'test'
 
+ruta_restaurantes = "/opt/spark-data/json/restaurantes.json"
+ruta_habitaciones = "/opt/spark-data/csv/habitaciones.csv"
+
 try:
     # Crear una sesión de Spark con las configuraciones necesarias para acceder a S3 a través de Localstack
     spark = SparkSession.builder \
@@ -21,7 +24,11 @@ try:
         .getOrCreate()
 
     # Leer un archivo CSV desde el sistema de archivos local
-    df3 = spark.read.option("delimiter", ",").option("header", True).csv("/opt/spark-data_Prim_ord/csv/habitaciones.csv")
+    df3 = spark.read.option("delimiter", ",").option("header", True).csv(ruta_habitaciones)
+    
+    # Mostrar el esquema de los DataFrames
+    df3.printSchema()
+    
     
     # Escribir el DataFrame en formato CSV en un bucket S3
     df3.write \
@@ -32,7 +39,9 @@ try:
         .csv(path='s3a://new-sample-bucket/habitacionesData', sep=',')
     
     # Leer un archivo JSON desde el sistema de archivos local
-    dfJson = spark.read.option("multiline", "true").json("/opt/spark-data_Prim_ord/json/restaurantes.json")
+    dfJson = spark.read.option("multiline", "true").json(ruta_restaurantes)
+    
+    dfJson.printSchema()
     
     # Escribir el DataFrame en formato JSON en un bucket S3
     dfJson.write \
